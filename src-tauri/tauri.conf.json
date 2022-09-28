@@ -20,12 +20,8 @@
         "readFile": true,
         "writeFile": true,
         "readDir": true,
-        "copyFile": true,
         "createDir": true,
-        "removeDir": true,
-        "removeFile": true,
-        "renameFile": true,
-        "scope": ["**"]
+        "scope": ["$APP/*"]
       },
       "protocol": {
         "asset": true,
@@ -75,9 +71,10 @@
       {
         "fullscreen": false,
         "height": 600,
-        "resizable": true,
+        "resizable": false,
         "title": "motions",
-        "width": 800
+        "width": 800,
+        "maximized": true
       }
     ]
   }
