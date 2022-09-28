@@ -1,6 +1,6 @@
 # motions
 
-a stop-motion studo
+a stop-motion-studio
 
 # Tauri + React + Typescript
 
