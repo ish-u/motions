@@ -2,9 +2,11 @@ import { useState } from "react";
 import Loader from "./Loader";
 import Modal from "./Modal";
 import { BaseDirectory } from "@tauri-apps/api/path";
-import { createDir} from "@tauri-apps/api/fs";
+import { createDir, writeTextFile } from "@tauri-apps/api/fs";
+import { useLocation } from "wouter";
 
 const CreateProjectTile = ({ projects }: { projects: string[] }) => {
+  const [location, setLocation] = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,26 +16,34 @@ const CreateProjectTile = ({ projects }: { projects: string[] }) => {
     if (!projects.includes(projectName)) {
       setLoading(true);
       await createDir(projectName, { dir: BaseDirectory.App });
+      await writeTextFile(
+        projectName + "\\" + projectName + ".json",
+        JSON.stringify({ frames: 0 }),
+        {
+          dir: BaseDirectory.App,
+        }
+      );
       setIsModalOpen(false);
       setLoading(false);
+      setLocation(`project/${projectName}`);
     }
   };
 
   return (
     <div
-      className="w-1/4 h-64 flex justify-center items-center"
+      className="flex h-64 w-1/4 items-center justify-center"
       onClick={() => {
         setIsModalOpen(true);
       }}
     >
-      <div className="w-5/6 h-5/6 flex justify-center items-center border-2 border-red-700 rounded-md p-2 bg-red-500/75 group hover:cursor-pointer">
+      <div className="group flex h-5/6 w-5/6 items-center justify-center rounded-md border-2 border-red-700 bg-red-500/75 p-2 hover:cursor-pointer">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-24 h-24 group-hover:w-28 group-hover:h-28 duration-150 font-bold"
+          className="h-24 w-24 font-bold duration-150 group-hover:h-28 group-hover:w-28"
         >
           <path
             strokeLinecap="round"
@@ -46,13 +56,13 @@ const CreateProjectTile = ({ projects }: { projects: string[] }) => {
       <Modal isOpen={isModalOpen} setIsOpen={setIsModalOpen}>
         <>
           <div className="px-4">
-            <div className="text-3xl my-2">Create Project</div>
-            <div className="mt-6 text-black font-semibold">
+            <div className="my-2 text-3xl">Create Project</div>
+            <div className="mt-6 font-semibold text-black">
               <input
                 type="text"
                 placeholder="Project Name"
-                className={`w-full h-10 p-2 rounded-sm outline-none disabled:bg-white/75 ${
-                  exists ? "border-red-500 border-2 " : ""
+                className={`h-10 w-full rounded-sm p-2 outline-none disabled:bg-white/75 ${
+                  exists ? "border-2 border-red-500 " : ""
                 }`}
                 onChange={(e) => {
                   setProjectName(e.target.value);
@@ -61,7 +71,7 @@ const CreateProjectTile = ({ projects }: { projects: string[] }) => {
                 disabled={loading}
               />
             </div>
-            <div className="text-sm font-semibold my-2">
+            <div className="my-2 text-sm font-semibold">
               {exists && "name exists"}
             </div>
 
@@ -73,7 +83,7 @@ const CreateProjectTile = ({ projects }: { projects: string[] }) => {
                   <button
                     onClick={createProject}
                     disabled={projectName === "" || exists}
-                    className="disabled:bg-emerald-600 bg-emerald-700/75 hover:bg-emerald-700 p-2 mr-4 my-2 font-semibold rounded-sm text-lg"
+                    className="my-2 mr-4 rounded-sm bg-emerald-700/75 p-2 text-lg font-semibold hover:bg-emerald-700 disabled:bg-emerald-600"
                   >
                     Create
                   </button>
@@ -81,7 +91,7 @@ const CreateProjectTile = ({ projects }: { projects: string[] }) => {
                     onClick={() => {
                       setIsModalOpen(false);
                     }}
-                    className="bg-red-500/75 hover:bg-red-500 p-2 mr-4 my-2 font-semibold rounded-sm text-lg"
+                    className="my-2 mr-4 rounded-sm bg-red-500/75 p-2 text-lg font-semibold hover:bg-red-500"
                   >
                     Discard
                   </button>
