@@ -54,52 +54,50 @@ const CreateProjectTile = ({ projects }: { projects: string[] }) => {
       </div>
 
       <Modal isOpen={isModalOpen} setIsOpen={setIsModalOpen}>
-        <>
-          <div className="px-4">
-            <div className="my-2 text-3xl">Create Project</div>
-            <div className="mt-6 font-semibold text-black">
-              <input
-                type="text"
-                placeholder="Project Name"
-                className={`h-10 w-full rounded-sm p-2 outline-none disabled:bg-white/75 ${
-                  exists ? "border-2 border-red-500 " : ""
-                }`}
-                onChange={(e) => {
-                  setProjectName(e.target.value);
-                  setExists(projects.includes(e.target.value));
-                }}
-                disabled={loading}
-              />
-            </div>
-            <div className="my-2 text-sm font-semibold">
-              {exists && "name exists"}
-            </div>
-
-            <div>
-              {loading ? (
-                <Loader />
-              ) : (
-                <>
-                  <button
-                    onClick={createProject}
-                    disabled={projectName === "" || exists}
-                    className="my-2 mr-4 rounded-sm bg-emerald-700/75 p-2 text-lg font-semibold hover:bg-emerald-700 disabled:bg-emerald-600"
-                  >
-                    Create
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsModalOpen(false);
-                    }}
-                    className="my-2 mr-4 rounded-sm bg-red-500/75 p-2 text-lg font-semibold hover:bg-red-500"
-                  >
-                    Discard
-                  </button>
-                </>
-              )}
-            </div>
+        <div className="w-[25vw] px-4">
+          <div className="my-2 text-3xl">Create Project</div>
+          <div className="mt-6 font-semibold text-black">
+            <input
+              type="text"
+              placeholder="Project Name"
+              className={`h-10 w-full rounded-sm p-2 outline-none disabled:bg-white/75 ${
+                exists ? "border-2 border-red-500 " : ""
+              }`}
+              onChange={(e) => {
+                setProjectName(e.target.value);
+                setExists(projects.includes(e.target.value));
+              }}
+              disabled={loading}
+            />
           </div>
-        </>
+          <div className="my-2 text-sm font-semibold">
+            {exists && "name exists"}
+          </div>
+
+          <div>
+            {loading ? (
+              <Loader />
+            ) : (
+              <>
+                <button
+                  onClick={createProject}
+                  disabled={projectName === "" || exists}
+                  className="my-2 mr-4 rounded-sm bg-emerald-700/75 p-2 text-lg font-semibold hover:bg-emerald-700 disabled:bg-emerald-600"
+                >
+                  Create
+                </button>
+                <button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                  }}
+                  className="my-2 mr-4 rounded-sm bg-red-500/75 p-2 text-lg font-semibold hover:bg-red-500"
+                >
+                  Discard
+                </button>
+              </>
+            )}
+          </div>
+        </div>
       </Modal>
     </div>
   );
