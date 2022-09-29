@@ -21,11 +21,11 @@
         "writeFile": true,
         "readDir": true,
         "createDir": true,
-        "scope": ["$APP/*"]
+        "scope": ["$APP", "$APP/*"]
       },
       "protocol": {
         "asset": true,
-        "assetScope": ["$APP/*"]
+        "assetScope": ["$APP", "$APP/*"]
       }
     },
     "bundle": {
