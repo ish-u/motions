@@ -1,32 +1,45 @@
 import { invoke } from "@tauri-apps/api";
-import { BaseDirectory, createDir } from "@tauri-apps/api/fs";
 import { useEffect, useRef, useState } from "react";
-import { appDir, join } from "@tauri-apps/api/path";
+import { appDir, BaseDirectory } from "@tauri-apps/api/path";
 import { v4 as uuidv4 } from "uuid";
-import { convertFileSrc } from "@tauri-apps/api/tauri";
+
+import { ClickButton } from "../components/Buttons";
+import { useRoute } from "wouter";
+import { readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 
 interface devicesInterface {
   deviceId: string;
   label: string;
 }
-
 const Camera = () => {
+  const [match, params] = useRoute("/camera/:name");
+  const [projectName, setProjectName] = useState("");
   const [devices, setDevices] = useState<devicesInterface[]>([]);
   const [deviceId, setDeviceId] = useState<string | undefined>(undefined);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const photoRef = useRef<HTMLCanvasElement>(null);
   const [index, setIndex] = useState(0);
-  const [disbale, setDisable] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
-  const [videoURL, setVideoURL] = useState("");
+  const [disableShutter, setDisableShutter] = useState(false);
+  const cameraRef = useRef<HTMLVideoElement>(null);
+  const photoRef = useRef<HTMLCanvasElement>(null);
 
-  const loadFile = async () => {
-    const appDirPath = await appDir();
-    const filePath = await join(appDirPath, "motions/video.mp4");
-    console.log(filePath);
-    const assetUrl = convertFileSrc(filePath);
-    setVideoURL(assetUrl);
-    setShowVideo(true);
+  const initCamera = async () => {
+    if (deviceId !== undefined) {
+      navigator.mediaDevices
+        .getUserMedia({
+          video: {
+            width: 1920,
+            height: 1080,
+            deviceId: deviceId,
+          },
+        })
+        .then((stream) => {
+          let video = cameraRef.current;
+          if (video) {
+            video.srcObject = stream;
+            video.play();
+          }
+        })
+        .catch((err) => console.error(err));
+    }
   };
 
   const getDevices = async () => {
@@ -47,127 +60,108 @@ const Camera = () => {
     });
   };
 
-  const getVideo = async () => {
-    if (deviceId !== undefined) {
-      navigator.mediaDevices
-        .getUserMedia({
-          video: {
-            width: 1920,
-            height: 1080,
-            deviceId: deviceId,
-          },
-        })
-        .then((stream) => {
-          let video = videoRef.current;
-          if (video) {
-            video.srcObject = stream;
-            video.play();
-          }
-        })
-        .catch((err) => console.error(err));
-    }
-  };
-
   const getPhoto = async () => {
-    setDisable(true);
+    setDisableShutter(true);
+
     const width = 1920;
     const height = 1080;
 
-    const video = videoRef.current;
+    const camera = cameraRef.current;
     const photo = photoRef.current;
 
-    if (photo && video) {
+    if (camera && photo && deviceId) {
       photo.width = width;
       photo.height = height;
 
       let ctx = photo.getContext("2d");
-      ctx?.drawImage(video, 0, 0, photo.width, photo.height);
+      ctx?.drawImage(camera, 0, 0, photo.width, photo.height);
 
       const path = await appDir();
-      // await createDir("motions", { dir: BaseDirectory.App });
-      console.log(path + "motions");
 
       const imageData = photo.toDataURL();
       const base64Data = imageData.replace(/^data:image\/png;base64,/, "");
 
       await invoke("image_data", {
         data: base64Data,
-        path: path + "motions/image" + index + ".png",
+        path: path + projectName + "/image" + index + ".png",
       });
+      await writeTextFile(
+        projectName + "\\" + projectName + ".json",
+        JSON.stringify({ frames: index }),
+        {
+          dir: BaseDirectory.App,
+        }
+      );
       setIndex((prev) => prev + 1);
-      setDisable(false);
-      // const appDirPath = await appDir();
-      // const filePath = await join(appDirPath, "motions/video.mp4");
-      // setVideoURL(filePath);
-      setShowVideo(true);
     }
+    setDisableShutter(false);
+  };
+
+  const getFrames = async (project: string) => {
+    console.log(project);
+    const content = await readTextFile(project + "\\" + project + ".json", {
+      dir: BaseDirectory.App,
+    });
+    const settings = JSON.parse(content);
+    setIndex((settings?.frames as number) + 1);
   };
 
   useEffect(() => {
+    setProjectName(params?.name.replaceAll("%20", " ") || "");
     getDevices();
+    getFrames(params?.name.replaceAll("%20", " ") || "");
   }, []);
 
   useEffect(() => {
-    getVideo();
-  }, [videoRef, deviceId]);
+    initCamera();
+  }, [deviceId]);
 
   return (
-    <div>
-      <div className="camera">
-        <video className="w-screen h-screen" ref={videoRef}></video>
-      </div>
-      <div className="fixed top-0 right-0 flex justify-center w-64 h-64 photo">
-        <canvas className="" ref={photoRef}></canvas>
-      </div>
-      {showVideo && (
-        <div className="z-50">
-          <video src={videoURL} autoPlay loop></video>
-        </div>
-      )}
-      <div className="absolute flex items-center justify-center w-full click bottom-8">
-        <button
-          onClick={() => {
-            getPhoto();
-          }}
-          className="p-2 m-2 text-2xl font-bold border border-lime-600 w-fit rounded-xl bg-lime-400 hover:bg-lime-500"
-          disabled={disbale}
-        >
-          click
-        </button>
-        <button
-          onClick={async () => {
-            setShowVideo(false);
-            await invoke("make_video", { path: await appDir() });
-            setShowVideo(true);
-          }}
-          className="p-2 m-2 text-2xl font-bold border border-lime-600 w-fit rounded-xl bg-lime-400 hover:bg-lime-500"
-        >
-          make video
-        </button>
-        <button
-          onClick={async () => {
-            loadFile();
-          }}
-          className="p-2 m-2 text-2xl font-bold border border-lime-600 w-fit rounded-xl bg-lime-400 hover:bg-lime-500"
-        >
-          load
-        </button>
-        <select
-          className="h-10 m-2"
-          id="device"
-          name="device"
-          defaultValue={"DEFAULT"}
-          onChange={(e) => setDeviceId(e.target.value)}
-        >
-          <option value="DEFAULT" disabled>
-            Choose Camera
+    <div className="relative h-full  text-white">
+      <select
+        className="absolute bottom-0 left-8 z-50 m-2 h-fit rounded-md bg-slate-600 p-2 text-xl font-semibold outline-none"
+        id="device"
+        name="device"
+        defaultValue={"DEFAULT"}
+        onChange={(e) => setDeviceId(e.target.value)}
+      >
+        <option value="DEFAULT" disabled>
+          Choose Camera
+        </option>
+        {devices.map((device) => (
+          <option key={device.deviceId} value={device.deviceId}>
+            {device.label}
           </option>
-          {devices.map((device) => (
-            <option key={device.deviceId} value={device.deviceId}>
-              {device.label}
-            </option>
-          ))}
-        </select>
+        ))}
+      </select>
+      <div className="flex h-full justify-evenly">
+        <video className="w-10/12" ref={cameraRef}></video>
+        <div className="invisible fixed">
+          <canvas ref={photoRef}></canvas>
+        </div>
+        <div className=" flex w-1/12 flex-col items-center justify-center align-middle">
+          <div className="flex h-1/6 items-center">
+            <div
+              onClick={() => {
+                if (!disableShutter) {
+                  getPhoto();
+                }
+              }}
+            >
+              <ClickButton />
+            </div>
+          </div>
+          <div className="min-w-14 flex h-14 items-center justify-center rounded-md bg-slate-800 p-4 text-4xl font-bold">
+            {index}
+          </div>
+          <input
+            className="my-8 h-3/6"
+            type="range"
+            style={{
+              WebkitAppearance: "slider-vertical",
+            }}
+          />
+        </div>
       </div>
     </div>
   );
