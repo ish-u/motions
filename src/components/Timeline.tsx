@@ -9,13 +9,13 @@ const Timeline = ({
   setImage: (path: string) => void;
 }) => {
   return (
-    <div className="flex h-1/4 w-full items-center overflow-x-scroll rounded-sm bg-slate-600/75">
+    <div className=" flex h-[25vh] w-full items-center overflow-y-hidden overflow-x-scroll rounded-sm border bg-slate-600/75">
       {images.map((image, idx) => {
         return (
           <img
             className="m-2 h-5/6"
             src={convertFileSrc(image)}
-            key={idx}
+            key={image + idx}
             onClick={() => {
               setImage(convertFileSrc(image));
             }}
