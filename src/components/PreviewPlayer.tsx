@@ -24,7 +24,7 @@ const PreviewPlayer = ({ projectName }: { projectName: string }) => {
   return (
     <div className="h-[50vh] w-[50vw] ">
       {showVideo ? (
-        <video src={videoURL} loop controls></video>
+        <video src={videoURL} autoPlay controls></video>
       ) : (
         <div className="flex h-full w-full items-center justify-center">
           <Loader />
