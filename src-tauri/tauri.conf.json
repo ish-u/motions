@@ -21,7 +21,7 @@
         "writeFile": true,
         "readDir": true,
         "createDir": true,
-        "scope": ["$APP", "$APP/*"]
+        "scope": ["$APP", "$APP/*", "$RESOURCE/*"]
       },
       "protocol": {
         "asset": true,
@@ -52,7 +52,7 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
+      "resources": ["ffmpeg\\ffmpeg.exe"],
       "shortDescription": "",
       "targets": "all",
       "windows": {

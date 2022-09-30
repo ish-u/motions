@@ -36,12 +36,18 @@ fn image_data(data: &str, path: &str) {
 use execute::Execute;
 use std::process::Command;
 #[tauri::command]
-fn make_video(path: &str) {
-    const FFMPEG_PATH: &str = "ffmpeg\\ffmpeg.exe";
+fn make_video(path: &str, handle: tauri::AppHandle) {
+    // const FFMPEG_PATH: &str = "ffmpeg\\ffmpeg.exe";
+    let resource_path = handle
+        .path_resolver()
+        .resolve_resource("ffmpeg\\ffmpeg.exe")
+        .expect("failed to resolve resource");
+
+    let ffmpeg = resource_path;
 
     print!("{}{}", path, "\\image%d.png");
 
-    let mut command = Command::new(FFMPEG_PATH);
+    let mut command = Command::new(ffmpeg);
     command.arg("-f");
     command.arg("image2");
     command.arg("-y");
