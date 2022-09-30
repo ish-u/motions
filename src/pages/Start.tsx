@@ -17,6 +17,7 @@ const Start = () => {
         .filter((dir) => dir !== "");
       console.log(directories);
       setProjects(directories);
+      await navigator.mediaDevices.getUserMedia({ video: true });
     };
     getDirectories();
   }, []);

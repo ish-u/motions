@@ -30,7 +30,7 @@
     },
     "bundle": {
       "active": true,
-      "category": "VideoTool",
+      "category": "Video",
       "copyright": "",
       "deb": {
         "depends": []

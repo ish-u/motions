@@ -43,7 +43,6 @@ const Camera = () => {
   };
 
   const getDevices = async () => {
-    // navigator.mediaDevices.getUserMedia({ video: true });
     const availableDevices = await navigator.mediaDevices.enumerateDevices();
     availableDevices.forEach((device) => {
       if (device.deviceId !== "") {
