@@ -9,7 +9,7 @@ const PreviewPlayer = ({ projectName }: { projectName: string }) => {
 
   const loadFile = async () => {
     setShowVideo(false);
-    await invoke("make_video", { path: await appDir() });
+    await invoke("make_video", { path: (await appDir()) + projectName });
     const appDirPath = await appDir();
     const filePath = await join(appDirPath, projectName + "/video.mp4");
     const assetUrl = convertFileSrc(filePath);
@@ -24,7 +24,7 @@ const PreviewPlayer = ({ projectName }: { projectName: string }) => {
   return (
     <div className="h-[50vh] w-[50vw] ">
       {showVideo ? (
-        <video src={videoURL} autoPlay loop controls></video>
+        <video src={videoURL} loop controls></video>
       ) : (
         <div className="flex h-full w-full items-center justify-center">
           <Loader />
