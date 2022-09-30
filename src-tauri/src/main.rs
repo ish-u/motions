@@ -39,22 +39,22 @@ use std::process::Command;
 fn make_video(path: &str) {
     const FFMPEG_PATH: &str = "ffmpeg\\ffmpeg.exe";
 
-    print!("{}{}", path, "motions\\image%d.png");
+    print!("{}{}", path, "\\image%d.png");
 
     let mut command = Command::new(FFMPEG_PATH);
     command.arg("-f");
     command.arg("image2");
     command.arg("-y");
     command.arg("-i");
-    command.arg(format!("{}{}", path, "motions\\image%d.png"));
+    command.arg(format!("{}{}", path, "\\image%d.png"));
     command.arg("-c:v");
     command.arg("libx264");
     command.arg("-pix_fmt");
     command.arg("yuv420p");
     command.arg("-r");
     command.arg("24");
-    
-    command.arg(format!("{}{}", path, "motions\\video.mp4"));
+
+    command.arg(format!("{}{}", path, "\\video.mp4"));
     let output = command.execute_output().unwrap();
 
     if let Some(exit_code) = output.status.code() {
