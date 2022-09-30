@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "motions",
-    "version": "0.0.0"
+    "version": "0.0.1"
   },
   "tauri": {
     "allowlist": {
@@ -30,7 +30,7 @@
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
+      "category": "VideoTool",
       "copyright": "",
       "deb": {
         "depends": []
@@ -43,7 +43,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.tauri.motions",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
