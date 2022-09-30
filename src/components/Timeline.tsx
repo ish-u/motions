@@ -9,7 +9,7 @@ const Timeline = ({
   setImage: (path: string) => void;
 }) => {
   return (
-    <div className=" flex h-[25vh] w-full items-center overflow-y-hidden overflow-x-scroll rounded-sm border bg-slate-600/75">
+    <div className=" flex h-1/4 w-full items-center overflow-y-hidden overflow-x-scroll rounded-sm bg-slate-600/75">
       {images.map((image, idx) => {
         return (
           <img
