@@ -21,11 +21,20 @@
         "writeFile": true,
         "readDir": true,
         "createDir": true,
-        "scope": ["$APP", "$APP/*", "$RESOURCE/*"]
+        "copyFile": true,
+        "scope": ["$APP", "$APP/*", "$RESOURCE/*", "$VIDEO", "$VIDEO/*"]
       },
       "protocol": {
         "asset": true,
-        "assetScope": ["$APP", "$APP/*"]
+        "assetScope": ["$APP", "$APP/*", "$RESOURCE/*", "$VIDEO", "$VIDEO/*"]
+      },
+      "window": {
+        "maximize": true,
+        "minimize": true,
+        "close": true
+      },
+      "dialog": {
+        "save": true
       }
     },
     "bundle": {
@@ -69,7 +78,7 @@
     },
     "windows": [
       {
-        "fullscreen": false,
+        "fullscreen": true,
         "height": 600,
         "resizable": false,
         "title": "motions",
