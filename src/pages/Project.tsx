@@ -1,7 +1,14 @@
-import { BaseDirectory, readDir } from "@tauri-apps/api/fs";
-import { convertFileSrc } from "@tauri-apps/api/tauri";
 import { useEffect, useState } from "react";
 import { useRoute } from "wouter";
+import {
+  BaseDirectory,
+  readDir,
+  copyFile,
+  createDir,
+} from "@tauri-apps/api/fs";
+import { convertFileSrc } from "@tauri-apps/api/tauri";
+import { videoDir, appDir } from "@tauri-apps/api/path";
+import { invoke } from "@tauri-apps/api";
 import {
   CameraButton,
   DemoButton,
@@ -11,6 +18,7 @@ import {
 import Modal from "../components/Modal";
 import PreviewPlayer from "../components/PreviewPlayer";
 import Timeline from "../components/Timeline";
+
 const Project = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [match, params] = useRoute("/project/:name");
@@ -37,6 +45,15 @@ const Project = () => {
     }
   };
 
+  const exportVideo = async () => {
+    await invoke("make_video", { path: (await appDir()) + projectName });
+    await createDir(projectName, { dir: BaseDirectory.Video });
+    await copyFile(
+      (await appDir()) + projectName + "\\video.mp4",
+      (await videoDir()) + projectName + "\\video.mp4"
+    );
+  };
+
   useEffect(() => {
     getImages();
   }, []);
@@ -52,7 +69,9 @@ const Project = () => {
           >
             <DemoButton />
           </div>
-          <ExportButton />
+          <div onClick={exportVideo}>
+            <ExportButton />
+          </div>
         </div>
         <img src={image} alt="" className="h-full grow p-4" />
         <div className="flex h-full w-1/6 flex-col items-center">
