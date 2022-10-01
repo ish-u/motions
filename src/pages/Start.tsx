@@ -17,18 +17,20 @@ const Start = () => {
         .filter((dir) => dir !== "");
       console.log(directories);
       setProjects(directories);
-      await navigator.mediaDevices.getUserMedia({ video: true });
+      // await navigator.mediaDevices.getUserMedia({ video: true });
     };
     getDirectories();
   }, []);
 
   return (
-    <div className="h-full w-full overflow-hidden bg-red-500/50 text-white">
-      <div className="flex max-h-full flex-wrap overflow-y-scroll p-8">
-        <CreateProjectTile projects={projects} />
-        {projects.map((project, idx) => (
-          <ProjectTile name={project} key={idx} />
-        ))}
+    <div className="h-full w-full p-6">
+      <div className="h-full w-full overflow-hidden bg-red-500/50 text-white">
+        <div className="flex max-h-full flex-wrap overflow-y-scroll p-8">
+          <CreateProjectTile projects={projects} />
+          {projects.map((project, idx) => (
+            <ProjectTile name={project} key={idx} />
+          ))}
+        </div>
       </div>
     </div>
   );
