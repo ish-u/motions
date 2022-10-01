@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import { appWindow } from "@tauri-apps/api/window";
 
 const DemoButton = () => {
   return (
@@ -124,4 +125,84 @@ const ExportButton = () => {
     </div>
   );
 };
-export { CameraButton, DemoButton, SettingButton, ClickButton, ExportButton };
+
+const WindowControlButtons = () => {
+  return (
+    <div className="text-white">
+      {/* BACK BUTTON */}
+      <div
+        className="fixed top-0 left-0 bg-black/25 p-2 duration-300 hover:bg-slate-900/75"
+        onClick={() => {
+          console.log("CLICK");
+          window.history.back();
+        }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="h-6 w-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+          />
+        </svg>
+      </div>
+      <div className="fixed top-0 right-0 flex bg-black/25">
+        {/* MINIMIZE BUTTON */}
+        <div
+          className="p-2 duration-300 hover:bg-slate-900/75"
+          onClick={async () => {
+            await appWindow.minimize();
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="h-6 w-6"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M18 12H6" />
+          </svg>
+        </div>
+        {/* CLOSE BUTTOn */}
+        <div
+          className="p-2 duration-300 hover:bg-red-900/90"
+          onClick={async () => {
+            await appWindow.close();
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="h-6 w-6 "
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export {
+  CameraButton,
+  DemoButton,
+  SettingButton,
+  ClickButton,
+  ExportButton,
+  WindowControlButtons,
+};
