@@ -1,16 +1,16 @@
-import { invoke } from "@tauri-apps/api";
 import { useEffect, useRef, useState } from "react";
-import { appDir, BaseDirectory } from "@tauri-apps/api/path";
-import { v4 as uuidv4 } from "uuid";
-
-import { ClickButton } from "../components/Buttons";
 import { useRoute } from "wouter";
+import { invoke } from "@tauri-apps/api";
+import { appDir, BaseDirectory } from "@tauri-apps/api/path";
 import { readTextFile, writeTextFile } from "@tauri-apps/api/fs";
+import OnionLayerSlider from "../components/OnionLayerSlider";
+import { ClickButton } from "../components/Buttons";
 
 interface devicesInterface {
   deviceId: string;
   label: string;
 }
+
 const Camera = () => {
   const [match, params] = useRoute("/camera/:name");
   const [projectName, setProjectName] = useState("");
@@ -20,10 +20,11 @@ const Camera = () => {
   const [disableShutter, setDisableShutter] = useState(false);
   const cameraRef = useRef<HTMLVideoElement>(null);
   const photoRef = useRef<HTMLCanvasElement>(null);
+  const [opacity, setOpacity] = useState(100);
 
   const initCamera = async () => {
     if (deviceId !== undefined) {
-      navigator.mediaDevices
+      await navigator.mediaDevices
         .getUserMedia({
           video: {
             width: 1920,
@@ -117,6 +118,39 @@ const Camera = () => {
 
   return (
     <div className="relative h-full  text-white">
+      <div className="relative z-10 flex h-full justify-evenly">
+        <video
+          className={`w-10/12`}
+          style={{
+            opacity: opacity / 100,
+          }}
+          ref={cameraRef}
+        ></video>
+        <div className="absolute top-0 left-0 -z-10 flex h-full items-center justify-evenly">
+          <canvas className=" w-10/12" ref={photoRef}></canvas>
+          <div className="  w-1/12 "></div>
+        </div>
+
+        <div className=" flex w-1/12 flex-col items-center justify-center align-middle">
+          <div className="flex h-1/6 items-center">
+            <div
+              onClick={() => {
+                if (!disableShutter) {
+                  getPhoto();
+                }
+              }}
+            >
+              <ClickButton />
+            </div>
+          </div>
+          <div className="min-w-14 flex h-14 items-center justify-center rounded-md bg-slate-800 p-4 text-4xl font-bold">
+            {index}
+          </div>
+          <div className="h-3/6 w-2/3">
+            <OnionLayerSlider setOpacity={setOpacity} />
+          </div>
+        </div>
+      </div>
       <select
         className="absolute bottom-0 left-8 z-50 m-2 h-fit rounded-md bg-slate-600 p-2 text-xl font-semibold outline-none"
         id="device"
@@ -133,35 +167,6 @@ const Camera = () => {
           </option>
         ))}
       </select>
-      <div className="flex h-full justify-evenly">
-        <video className="w-10/12" ref={cameraRef}></video>
-        <div className="invisible fixed">
-          <canvas ref={photoRef}></canvas>
-        </div>
-        <div className=" flex w-1/12 flex-col items-center justify-center align-middle">
-          <div className="flex h-1/6 items-center">
-            <div
-              onClick={() => {
-                if (!disableShutter) {
-                  getPhoto();
-                }
-              }}
-            >
-              <ClickButton />
-            </div>
-          </div>
-          <div className="min-w-14 flex h-14 items-center justify-center rounded-md bg-slate-800 p-4 text-4xl font-bold">
-            {index}
-          </div>
-          <input
-            className="my-8 h-3/6"
-            type="range"
-            style={{
-              WebkitAppearance: "slider-vertical",
-            }}
-          />
-        </div>
-      </div>
     </div>
   );
 };
