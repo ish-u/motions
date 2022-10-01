@@ -9,15 +9,15 @@
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
+  height: 10px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track:hover {
-  background: #ff000040;
+  background: #0000002a;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #ff00007a;
-  border-radius: 1px;
+  background: #0000004a;
 }
