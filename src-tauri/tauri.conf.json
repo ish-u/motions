@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "motions",
-    "version": "0.0.1"
+    "version": "0.0.11"
   },
   "tauri": {
     "allowlist": {
